@@ -26,3 +26,5 @@ jobs:
 ```
 
 Pin to `@main` (floating), a tag, or a commit SHA. Callers must have the `git-lfs-hub` monorepo layout (turbo, `vars.input.json`, `server/`, `e2e/`).
+
+The reusable workflows reference internal actions via local file paths (`./ci-cd/actions/*`). Callers must mount this repo as a submodule at `./ci-cd/` and use `submodules: recursive` on checkout.

@@ -23,7 +23,7 @@ runs:
           .s3.bucket             = ((.s3.bucket             // "lfs-objects") + "-staging")
         ' > vars.input.json
 
-    - uses: git-lfs-hub/ci-cd/actions/init@main
+    - uses: ./ci-cd/actions/init
 
     - name: Sanity-check rendered Worker name
       shell: bash

@@ -29,17 +29,17 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Init Staging
-        uses: git-lfs-hub/ci-cd/actions/init-staging@main
+        uses: ./ci-cd/actions/init-staging
         with:
           vars-json: ${{ inputs.vars-json }}
 
       - name: CD
-        uses: git-lfs-hub/ci-cd/actions/cd@main
+        uses: ./ci-cd/actions/cd
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: E2E
-        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
+        uses: ./ci-cd/actions/e2e-test
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_STAGING_LOGIN_SECRET }}
