@@ -4,11 +4,6 @@ description: "Checkout, set up Bun, and install root dependencies (frozen lockfi
 runs:
   using: "composite"
   steps:
-    - name: Upstream pre-commit
-      if: vars.GLH_UPSTREAM == 'true'
-      run: scripts/upstream.sh pre-commit
-      shell: bash
-
     - name: Set environment variables
       run: echo 'TURBO_RUN_SUMMARY=true' >> $GITHUB_ENV
       shell: bash
