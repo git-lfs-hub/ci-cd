@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  workflow_call:
+
+env:
+  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON || secrets.GLH_VARS_JSON }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM || secrets.TURBO_TEAM }}
+  TURBO_TEAMID: ${{ vars.TURBO_TEAMID || secrets.TURBO_TEAMID }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Init
+        uses: git-lfs-hub/ci-cd/actions/init@main
+
+      - name: Test
+        run: bunx turbo run test build
+
+      - name: Turbo Summary
+        uses: git-lfs-hub/ci-cd/actions/turbo-summary@main

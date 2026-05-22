@@ -1,0 +1,15 @@
+name: "CD"
+description: Deploy the Worker via turbo.
+
+inputs:
+  cloudflare-api-token:
+    description: Cloudflare API token.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
+      run: bunx turbo run deploy

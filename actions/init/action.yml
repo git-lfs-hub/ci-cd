@@ -1,0 +1,43 @@
+name: "Init"
+description: "Checkout, set up Bun, and install root dependencies (frozen lockfile)"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upstream pre-commit
+      if: vars.GLH_UPSTREAM == 'true'
+      run: scripts/upstream.sh pre-commit
+      shell: bash
+
+    - name: Set environment variables
+      run: echo 'TURBO_RUN_SUMMARY=true' >> $GITHUB_ENV
+      shell: bash
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: "server/package.json"
+
+    - uses: oven-sh/setup-bun@v2
+
+    - name: Cache bun dependencies
+      uses: actions/cache@v5
+      with:
+        path: ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+    - run: bun install --frozen-lockfile
+      shell: bash
+
+    - name: Initialize vars.json
+      if: hashFiles('vars.json', 'vars.input.json') == '' # neither exists
+      run: |
+        if [ -z "$GLH_VARS_JSON" ]; then
+          echo "::error::Commit vars[.input].json or set vars|secret.GLH_VARS_JSON from `bun run config`."
+          exit 1
+        fi
+        printf '%s\n' "$GLH_VARS_JSON" > vars.input.json
+      shell: bash
+
+    # Avoid turbo cache invalidations downstream
+    - run: bun turbo '//#config'
+      shell: bash
