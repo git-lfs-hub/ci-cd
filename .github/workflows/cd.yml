@@ -10,8 +10,8 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
-  cd:
-    name: "CD"
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:

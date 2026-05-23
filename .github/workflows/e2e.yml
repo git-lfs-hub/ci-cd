@@ -13,8 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  e2e:
-    name: E2E
+  test:
+    name: Test
     runs-on: ubuntu-latest
     concurrency:
       group: lfs-server-prod-e2e
