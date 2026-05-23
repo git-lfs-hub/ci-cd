@@ -20,6 +20,7 @@ runs:
           .cloudflare.workerName = ((.cloudflare.workerName // "lfs-server") + "-staging") |
           .s3.bucket             = ((.s3.bucket             // "lfs-objects") + "-staging")
         ' > vars.input.json
+        echo "::notice file=vars.input.json::File written"
 
     - uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 

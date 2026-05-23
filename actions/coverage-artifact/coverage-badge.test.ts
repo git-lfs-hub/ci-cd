@@ -123,7 +123,9 @@ describe("main", () => {
 
   test("reads summary, resolves color, writes badge.json", async () => {
     await main(JSON.stringify({ "90": "green", "80": "yellow", "0": "red" }));
-    const badge = await Bun.file(join(tmpDir, "coverage/badge.json")).json();
+    const badge = await Bun.file(
+      join(tmpDir, "coverage/coverage-badge.json"),
+    ).json();
     expect(badge).toEqual({
       subject: "Coverage",
       status: "85.5%",

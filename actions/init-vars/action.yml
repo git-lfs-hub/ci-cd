@@ -25,5 +25,7 @@ runs:
       env:
         VARS_JSON: ${{ inputs.vars-json }}
         VARS_FILE: ${{ inputs.file }}
-      run: printf '%s\n' "$VARS_JSON" > "$VARS_FILE"
+      run: |
+        printf '%s\n' "$VARS_JSON" > "$VARS_FILE"
+        echo "::notice file=$VARS_FILE::File written"
       shell: bash
