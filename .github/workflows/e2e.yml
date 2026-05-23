@@ -1,4 +1,4 @@
-name: CD
+name: E2E
 
 on:
   workflow_call:
@@ -9,10 +9,16 @@ env:
   TURBO_TEAMID: ${{ vars.TURBO_TEAMID || secrets.TURBO_TEAMID }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
+permissions:
+  contents: write
+
 jobs:
-  cd:
-    name: "CD"
+  e2e:
+    name: E2E
     runs-on: ubuntu-latest
+    concurrency:
+      group: lfs-server-prod-e2e
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v6
@@ -22,10 +28,9 @@ jobs:
       - name: Init
         uses: git-lfs-hub/ci-cd/actions/init@main
 
-      - name: Deploy Prod
-        uses: git-lfs-hub/ci-cd/actions/cd@main
+      - name: Test
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
         with:
-          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Turbo Summary
-        uses: git-lfs-hub/ci-cd/actions/turbo-summary@main
+          gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
+          login-secret: ${{ secrets.GLH_LOGIN_SECRET }}
+          pr-number: main

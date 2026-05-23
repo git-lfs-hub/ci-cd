@@ -2,25 +2,21 @@ name: Staging
 
 on:
   workflow_call:
-    inputs:
-      vars-json:
-        type: string
-        required: true
-        description: |
-          Caller's GLH_VARS_JSON (prod vars.input.json contents). The workflow
-          derives staging values by appending '-staging' to cloudflare.workerName
-          and s3.bucket — no separate staging vars JSON needed.
+
+env:
+  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON || secrets.GLH_VARS_JSON }}
+  TURBO_REMOTE_CACHE_SIGNATURE_KEY: staging
+
+permissions:
+  contents: write
 
 jobs:
   staging:
-    name: CD+E2E
+    name: CD + E2E
     runs-on: ubuntu-latest
     concurrency:
       group: lfs-server-staging-e2e
       cancel-in-progress: false
-    env:
-      TURBO_REMOTE_CACHE_SIGNATURE_KEY: staging
-
     steps:
       - uses: actions/checkout@v6
         with:
@@ -29,17 +25,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Init Staging
-        uses: ./ci-cd/actions/init-staging
-        with:
-          vars-json: ${{ inputs.vars-json }}
+        uses: git-lfs-hub/ci-cd/actions/init-staging@main
 
-      - name: CD
-        uses: ./ci-cd/actions/cd
+      - name: Deploy Staging
+        uses: git-lfs-hub/ci-cd/actions/cd@main
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: E2E
-        uses: ./ci-cd/actions/e2e-test
+      - name: Run E2E Tests
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_STAGING_LOGIN_SECRET }}

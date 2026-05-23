@@ -2,28 +2,26 @@ name: "Init staging render"
 description: |
   Build staging vars.input.json by appending -staging to cloudflare.workerName
   and s3.bucket, run the init action to render vars.json + wrangler.jsonc +
-  github-app.md, and sanity-check the result.
-
-inputs:
-  vars-json:
-    description: Caller's prod GLH_VARS_JSON contents.
-    required: true
+  github-app.md, and sanity-check the result. Reads prod vars from
+  GLH_VARS_JSON env var (set by caller workflow).
 
 runs:
   using: composite
   steps:
     - name: Build staging vars (append -staging suffix)
       shell: bash
-      env:
-        INPUT_VARS_JSON: ${{ inputs.vars-json }}
       run: |
+        if [ -z "$GLH_VARS_JSON" ]; then
+          echo "::error::GLH_VARS_JSON env var is empty; set vars|secrets.GLH_VARS_JSON in caller."
+          exit 1
+        fi
         rm -f vars.input.json vars.json wrangler.jsonc github-app.md
-        printf '%s\n' "$INPUT_VARS_JSON" | jq '
+        printf '%s\n' "$GLH_VARS_JSON" | jq '
           .cloudflare.workerName = ((.cloudflare.workerName // "lfs-server") + "-staging") |
           .s3.bucket             = ((.s3.bucket             // "lfs-objects") + "-staging")
         ' > vars.input.json
 
-    - uses: ./ci-cd/actions/init
+    - uses: git-lfs-hub/ci-cd/actions/init@main
 
     - name: Sanity-check rendered Worker name
       shell: bash
