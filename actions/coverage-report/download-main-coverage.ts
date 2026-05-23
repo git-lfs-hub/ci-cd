@@ -29,9 +29,7 @@ export function summaryOutputLine(summaryPath: string) {
 export async function main(baseUrl: string, outputPath: string) {
   const results = await download(baseUrl, "coverage/main");
   const summaryPath = results.find((p) => p.endsWith("coverage-summary.json"))!;
-  await Bun.file(outputPath)
-    .writer()
-    .write(summaryOutputLine(summaryPath) + "\n");
+  await Bun.write(outputPath, summaryOutputLine(summaryPath) + "\n");
 }
 
 /* istanbul ignore next */
