@@ -11,6 +11,9 @@ on:
           derives staging values by appending '-staging' to cloudflare.workerName
           and s3.bucket — no separate staging vars JSON needed.
 
+permissions:
+  contents: write
+
 jobs:
   staging:
     name: CD+E2E

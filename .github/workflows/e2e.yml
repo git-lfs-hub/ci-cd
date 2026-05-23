@@ -9,6 +9,9 @@ env:
   TURBO_TEAMID: ${{ vars.TURBO_TEAMID || secrets.TURBO_TEAMID }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
+permissions:
+  contents: write
+
 jobs:
   e2e:
     name: "E2E"
