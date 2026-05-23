@@ -1,9 +1,21 @@
-import { test, expect, describe } from "vitest";
-import { parseThresholds, resolveColor, makeBadge } from "./coverage-badge";
+import { test, expect, describe, beforeEach, afterEach } from "vitest";
+import {
+  parseThresholds,
+  resolveColor,
+  makeBadge,
+  main,
+} from "./coverage-badge";
+import { join } from "node:path";
+import { mkdtemp, rm, mkdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 
 describe("parseThresholds", () => {
   test("sorts descending by min", () => {
-    const result = parseThresholds({ "50": "orange", "90": "green", "80": "yellow" });
+    const result = parseThresholds({
+      "50": "orange",
+      "90": "green",
+      "80": "yellow",
+    });
     expect(result).toEqual([
       { min: 90, color: "green" },
       { min: 80, color: "yellow" },
@@ -85,6 +97,37 @@ describe("makeBadge", () => {
       subject: "Coverage",
       status: "100%",
       color: "green",
+    });
+  });
+});
+
+describe("main", () => {
+  let origCwd: string;
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    origCwd = process.cwd();
+    tmpDir = await mkdtemp(join(tmpdir(), "badge-test-"));
+    process.chdir(tmpDir);
+    await mkdir(join(tmpDir, "coverage"), { recursive: true });
+    await Bun.write(
+      join(tmpDir, "coverage/coverage-summary.json"),
+      JSON.stringify({ total: { statements: { pct: 85.5 } } }),
+    );
+  });
+
+  afterEach(async () => {
+    process.chdir(origCwd);
+    await rm(tmpDir, { recursive: true });
+  });
+
+  test("reads summary, resolves color, writes badge.json", async () => {
+    await main(JSON.stringify({ "90": "green", "80": "yellow", "0": "red" }));
+    const badge = await Bun.file(join(tmpDir, "coverage/badge.json")).json();
+    expect(badge).toEqual({
+      subject: "Coverage",
+      status: "85.5%",
+      color: "yellow",
     });
   });
 });

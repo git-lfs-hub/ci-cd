@@ -1,6 +1,7 @@
 # Git LFS Hub — ci-cd
 
 [![CI][ci-badge]][gh-wf-href]
+[![Coverage][coverage-badge]][coverage-href]
 [![CodeQL][codeql-badge]][codeql-href]
 [![Socket][socket-badge]][socket-href]
 [![License][license-badge]][license-href]
@@ -101,6 +102,9 @@ E2e tests live in [git-lfs-hub/e2e](https://github.com/git-lfs-hub/e2e) (`deploy
 
 [ci-badge]: https://badgen.net/github/checks/git-lfs-hub/ci-cd/main?icon=vitest&label=CI
 [gh-wf-href]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/main.yml?query=branch%3Amain
+
+[coverage-badge]: https://badgen.net/https/git-lfs-hub.github.io/ci-cd/coverage-badge.json?icon=vitest
+[coverage-href]: https://git-lfs-hub.github.io/ci-cd/lcov-report/
 
 [codeql-badge]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/github-code-scanning/codeql/badge.svg
 [codeql-href]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/github-code-scanning/codeql?query=branch%3Amain

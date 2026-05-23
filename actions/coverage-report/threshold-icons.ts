@@ -23,11 +23,16 @@ export function formatOutput(icons: string) {
   return `threshold-icons={${icons}}`;
 }
 
-if (import.meta.main) {
-  const thresholds: Record<string, string> = JSON.parse(process.argv[2] ?? "");
+export async function main(thresholdsJson: string, outputPath: string) {
+  const thresholds: Record<string, string> = JSON.parse(thresholdsJson);
   const icons = buildThresholdIcons(thresholds);
   const output = formatOutput(icons);
-  await Bun.file(process.env.GITHUB_OUTPUT!)
+  await Bun.file(outputPath)
     .writer()
     .write(output + "\n");
+}
+
+// istanbul ignore next
+if (import.meta.main) {
+  await main(process.argv[2] ?? "", process.env.GITHUB_OUTPUT!);
 }

@@ -1,5 +1,8 @@
-import { test, expect, describe } from "vitest";
-import { COLOR_ICON, buildThresholdIcons, formatOutput } from "./threshold-icons";
+import { test, expect, describe, beforeEach, afterEach } from "vitest";
+import { COLOR_ICON, buildThresholdIcons, formatOutput, main } from "./threshold-icons";
+import { join } from "node:path";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 
 describe("COLOR_ICON", () => {
   test("has all expected keys", () => {
@@ -51,6 +54,37 @@ describe("buildThresholdIcons", () => {
   test("handles empty object (only adds 100)", () => {
     const result = buildThresholdIcons({});
     expect(result).toBe(`100: '${COLOR_ICON["100"]}'`);
+  });
+});
+
+describe("main", () => {
+  let tmpDir: string;
+  let outputFile: string;
+
+  beforeEach(async () => {
+    tmpDir = await mkdtemp(join(tmpdir(), "icons-test-"));
+    outputFile = join(tmpDir, "github-output");
+    await Bun.write(outputFile, "");
+  });
+
+  afterEach(async () => {
+    await rm(tmpDir, { recursive: true });
+  });
+
+  test("writes threshold-icons to output file", async () => {
+    await main(JSON.stringify({ "90": "green", "80": "yellow" }), outputFile);
+    const content = await Bun.file(outputFile).text();
+    expect(content).toContain("threshold-icons={");
+    expect(content).toContain(`90: '${COLOR_ICON["green"]}'`);
+    expect(content).toContain(`80: '${COLOR_ICON["yellow"]}'`);
+    expect(content).toContain(`100: '${COLOR_ICON["100"]}'`);
+    expect(content).toMatch(/\n$/);
+  });
+
+  test("writes output with empty thresholds", async () => {
+    await main(JSON.stringify({}), outputFile);
+    const content = await Bun.file(outputFile).text();
+    expect(content).toBe(`threshold-icons={100: '${COLOR_ICON["100"]}'}\n`);
   });
 });
 

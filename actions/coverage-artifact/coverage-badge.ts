@@ -20,12 +20,17 @@ export function makeBadge(pct: number, color: string) {
   return { subject: "Coverage", status: `${pct}%`, color };
 }
 
-if (import.meta.main) {
+export async function main(thresholdsJson: string) {
   const summary = await Bun.file("coverage/coverage-summary.json").json();
   const pct = summary.total.statements.pct as number;
 
-  const raw: Record<string, string> = JSON.parse(process.argv[2] ?? "");
+  const raw: Record<string, string> = JSON.parse(thresholdsJson);
   const thresholds = parseThresholds(raw);
   const color = resolveColor(pct, thresholds);
   await Bun.write("coverage/badge.json", JSON.stringify(makeBadge(pct, color)));
+}
+
+// istanbul ignore next
+if (import.meta.main) {
+  await main(process.argv[2] ?? "");
 }
