@@ -11,25 +11,11 @@ runs:
     - name: Build staging vars (append -staging suffix)
       shell: bash
       run: |
-        if [ -z "$GLH_VARS_JSON" ]; then
-          echo "::error::GLH_VARS_JSON env var is empty; set vars|secrets.GLH_VARS_JSON in caller."
-          exit 1
-        fi
         rm -f vars.input.json vars.json wrangler.jsonc github-app.md
-        printf '%s\n' "$GLH_VARS_JSON" | jq '
-          .cloudflare.workerName = ((.cloudflare.workerName // "lfs-server") + "-staging") |
-          .s3.bucket             = ((.s3.bucket             // "lfs-objects") + "-staging")
-        ' > vars.input.json
-        echo "::notice file=vars.input.json::File written: vars.input.json"
+        bun "$GITHUB_ACTION_PATH/staging.ts" create-vars-input-json
 
     - uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 
     - name: Sanity-check rendered Worker name
       shell: bash
-      run: |
-        var_name="$(jq -r '.cloudflare.workerName' vars.json)"
-        wrangler_name="$(bun -e 'process.stdout.write((await import("./wrangler.jsonc")).default.name)')"
-        if [ "$var_name" != "$wrangler_name" ] || [[ "$var_name" != *-staging ]]; then
-          echo "::error::workerName mismatch or missing -staging suffix: vars.json='$var_name' wrangler.jsonc='$wrangler_name'"
-          exit 1
-        fi
+      run: bun "$GITHUB_ACTION_PATH/staging.ts" validate-wrangler-json
