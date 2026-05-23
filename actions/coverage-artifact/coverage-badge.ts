@@ -31,10 +31,10 @@ export async function main(thresholdsJson: string) {
     "coverage/coverage-badge.json",
     JSON.stringify(makeBadge(pct, color)),
   );
-  console.log("::notice file=coverage/coverage-badge.json::File written");
+  console.log("::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json");
 }
 
-// istanbul ignore next
+/* istanbul ignore next */
 if (import.meta.main) {
   await main(process.argv[2] ?? "");
 }

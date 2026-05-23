@@ -27,5 +27,5 @@ runs:
         VARS_FILE: ${{ inputs.file }}
       run: |
         printf '%s\n' "$VARS_JSON" > "$VARS_FILE"
-        echo "::notice file=$VARS_FILE::File written"
+        echo "::notice file=$VARS_FILE::File written: $VARS_FILE"
       shell: bash

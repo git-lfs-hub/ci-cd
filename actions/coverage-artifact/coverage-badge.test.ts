@@ -1,4 +1,4 @@
-import { test, expect, describe, beforeEach, afterEach } from "vitest";
+import { test, expect, describe, beforeEach, afterEach, vi } from "vitest";
 import {
   parseThresholds,
   resolveColor,
@@ -122,6 +122,7 @@ describe("main", () => {
   });
 
   test("reads summary, resolves color, writes badge.json", async () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => {});
     await main(JSON.stringify({ "90": "green", "80": "yellow", "0": "red" }));
     const badge = await Bun.file(
       join(tmpDir, "coverage/coverage-badge.json"),
@@ -131,5 +132,9 @@ describe("main", () => {
       status: "85.5%",
       color: "yellow",
     });
+    expect(spy).toHaveBeenCalledWith(
+      "::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json",
+    );
+    spy.mockRestore();
   });
 });
