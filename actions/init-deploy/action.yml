@@ -1,0 +1,25 @@
+name: "Init"
+description: "Checkout, set up Bun, install dependencies and configure"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set environment variables
+      run: echo 'TURBO_RUN_SUMMARY=true' >> $GITHUB_ENV
+      shell: bash
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: "server/package.json"
+
+    - uses: git-lfs-hub/ci-cd/actions/init-bun@main
+
+    - uses: git-lfs-hub/ci-cd/actions/init-vars@main
+      if: hashFiles('vars.json', 'vars.input.json') == ''
+      with:
+        vars-json: ${{ env.GLH_VARS_JSON }}
+        file: vars.input.json
+
+    # Avoid turbo cache invalidations downstream
+    - run: bun turbo '//#config'
+      shell: bash

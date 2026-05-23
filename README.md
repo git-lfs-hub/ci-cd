@@ -19,11 +19,34 @@ Pin workflow refs to `@main` (floating), a tag, or a commit SHA. Full secrets an
 
 | Workflow | Purpose |
 |:---------|:--------|
-| `.github/workflows/ci.yml` | Checkout + init + `turbo run test build` + Turbo summary |
-| `.github/workflows/cd.yml` | Checkout + init + `turbo run deploy` + Turbo summary |
-| `.github/workflows/staging.yml` | Staging vars render + deploy `lfs-server-staging` + e2e (single job; PR head SHA) |
+| `.github/workflows/ci.yml` | Checkout, init, test, build + Turbo summary |
+| `.github/workflows/cd.yml` | Checkout, init, deploy prod + Turbo summary |
+| `.github/workflows/staging.yml` | Staging vars render + deploy `-staging` + e2e |
 
 All three are `workflow_call` entry points. They read `GLH_VARS_JSON` from caller `vars`/`secrets` (or committed `vars[.input].json`).
+
+### `ci.yml` / `cd.yml`
+
+| Secret / variable | Description |
+|:------------------|:------------|
+| `GLH_VARS_JSON` | Contents of `vars[.input].json` when not committed |
+| `TURBO_TEAM`, `TURBO_TEAMID`, `TURBO_TOKEN` | Optional Turbo remote cache |
+| `CLOUDFLARE_API_TOKEN` | Worker deploy (`cd.yml` only) |
+
+#### Caller example
+
+```yaml
+ci:
+  uses: git-lfs-hub/ci-cd/.github/workflows/ci.yml@main
+  secrets: inherit
+```
+
+Production smoke after deploy uses composite actions directly in the caller workflow (see `deploy/.github/workflows/main.yml` — `e2e` job with `./ci-cd/actions/init-deploy` and `./ci-cd/actions/e2e-test`).
+
+### What reusable workflows assume about the caller repo
+
+- **Turbo monorepo** at the checkout root: `vars.input.json` (or `GLH_VARS_JSON`), `server/`, `config/`, `docs/`, `e2e/` submodules
+- **`e2e/` workspace** registered in root `package.json` so `bun install --frozen-lockfile` installs vitest into `e2e/node_modules`
 
 ### `staging.yml`
 
@@ -36,7 +59,7 @@ Concurrency group `lfs-server-staging-e2e` (queue depth 1) because deploy and e2
 | Input / secret | Used by | Description |
 |:---------------|:--------|:------------|
 | `vars`/`secrets.GLH_VARS_JSON` | `init-staging` | Prod `vars.input.json` contents |
-| `secrets.CLOUDFLARE_API_TOKEN` | `cd` | Wrangler deploy auth |
+| `secrets.CLOUDFLARE_API_TOKEN` | `deploy` | Wrangler deploy auth |
 | `secrets.GLH_STAGING_GITHUB_PAT` | `e2e-test` | Write on `git-lfs-hub/test`; org-mode requires `read:org` |
 | `secrets.GLH_STAGING_LOGIN_SECRET` | `e2e-test` | Must match `LOGIN_SECRET` on `lfs-server-staging` |
 | `secrets.TURBO_TOKEN` | env (optional) | Turbo remote cache |
@@ -51,40 +74,19 @@ staging:
   secrets: inherit
 ```
 
-### `ci.yml` / `cd.yml`
-
-| Secret / variable | Description |
-|:------------------|:------------|
-| `CLOUDFLARE_API_TOKEN` | Worker deploy (`cd.yml` only) |
-| `GLH_VARS_JSON` | Contents of `vars[.input].json` when not committed |
-| `TURBO_TEAM`, `TURBO_TEAMID`, `TURBO_TOKEN` | Optional Turbo remote cache |
-
-#### Caller example
-
-```yaml
-ci:
-  uses: git-lfs-hub/ci-cd/.github/workflows/ci.yml@main
-  secrets: inherit
-```
-
-Production smoke after deploy uses composite actions directly in the caller workflow (see `deploy/.github/workflows/main.yml` — `e2e` job with `./ci-cd/actions/init` and `./ci-cd/actions/e2e-test`).
-
-### What reusable workflows assume about the caller repo
-
-- **Turbo monorepo** at the checkout root: `vars.input.json` (or `GLH_VARS_JSON`), `server/`, `config/`, `docs/`, `e2e/` submodules
-- **`e2e/` workspace** registered in root `package.json` so `bun install --frozen-lockfile` installs vitest into `e2e/node_modules`
-
 ## Composite actions
 
 | Action | Description |
 |:-------|:------------|
-| `actions/init` | Bun setup, frozen `bun install`, render `vars.json` + `wrangler.jsonc` via `turbo '//#config'` |
-| `actions/init-staging` | Build staging `vars.input.json` (`-staging` suffix), then `init` + Worker name sanity check |
-| `actions/cd` | `turbo run deploy` (requires `cloudflare-api-token` input) |
+| `actions/init-bun` | Set up Bun, cache dependencies, `bun install --frozen-lockfile` |
+| `actions/init-vars` | Write `vars-json` input to a file (default `vars.json`); fails if input is empty |
+| `actions/init-deploy` | Node setup, `init-bun`, conditional `init-vars` → `vars.input.json`, then `turbo '//#config'` |
+| `actions/init-staging` | Build staging `vars.input.json` (`-staging` suffix), then `init-deploy` + Worker name sanity check |
+| `actions/deploy` | `turbo run deploy` (requires `cloudflare-api-token` input) |
 | `actions/e2e-test` | Run vitest suite from `e2e/` (`gh-pat`, `login-secret`, `pr-number` inputs) |
 | `actions/turbo-summary` | Post Turbo run summary via `charpeni/turborepo-summary-action` |
 
-`init` runs `scripts/upstream.sh pre-commit` when `vars.GLH_UPSTREAM == 'true'`. If neither `vars.json` nor `vars.input.json` exists, it writes `vars.input.json` from `GLH_VARS_JSON` or fails with a pointer to `bun run config`.
+When neither `vars.json` nor `vars.input.json` exists, `init-deploy` calls `init-vars` to write `vars.input.json` from `GLH_VARS_JSON` or fails with a pointer to `bun run config`.
 
 ## Cross-repo layout
 

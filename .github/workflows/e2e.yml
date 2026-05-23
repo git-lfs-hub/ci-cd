@@ -26,7 +26,7 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: git-lfs-hub/ci-cd/actions/init@main
+        uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 
       - name: Test
         uses: git-lfs-hub/ci-cd/actions/e2e-test@main

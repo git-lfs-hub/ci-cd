@@ -1,4 +1,4 @@
-name: "CD"
+name: Deploy
 description: Deploy the Worker via turbo.
 
 inputs:
