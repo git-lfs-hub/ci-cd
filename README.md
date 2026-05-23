@@ -1,5 +1,11 @@
 # Git LFS Hub — ci-cd
 
+[![CI][ci-badge]][gh-wf-href]
+[![Coverage][coverage-badge]][coverage-href]
+[![CodeQL][codeql-badge]][codeql-href]
+[![Socket][socket-badge]][socket-href]
+[![License][license-badge]][license-href]
+
 Reusable GitHub Actions workflows and composite actions for [Git LFS Hub](https://github.com/git-lfs-hub) deploy pipelines — Bun setup, config render, `turbo` test/build/deploy, staging deploy + e2e, and Turbo run summaries.
 
 For the bigger picture (what the stack does, the deploy flow, the other repos) see the [org overview](https://github.com/git-lfs-hub).
@@ -93,3 +99,15 @@ When neither `vars.json` nor `vars.input.json` exists, `init-deploy` calls `init
 Reusable workflows reference composite actions via repo refs (`git-lfs-hub/ci-cd/actions/*@<ref>`) so they are fetched directly from GitHub Actions. The caller does not need a `ci-cd` submodule, but `actions/checkout` still needs `submodules: recursive` for `config/`, `server/`, `docs/`, and `e2e/`.
 
 E2e tests live in [git-lfs-hub/e2e](https://github.com/git-lfs-hub/e2e) (`deploy/e2e/`). See [e2e/README.md](https://github.com/git-lfs-hub/e2e) for test behavior, env vars, and the `encryptCode` import from `server/`.
+
+[ci-badge]: https://badgen.net/github/checks/git-lfs-hub/ci-cd/main?icon=githubactions&label=CI
+[gh-wf-href]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/main.yml?query=branch%3Amain
+
+[codeql-badge]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/github-code-scanning/codeql/badge.svg
+[codeql-href]: https://github.com/git-lfs-hub/ci-cd/actions/workflows/github-code-scanning/codeql?query=branch%3Amain
+
+[socket-badge]: https://badgen.net/static/Socket/report/blue?icon=socket
+[socket-href]: https://socket.dev/dashboard/org/git-lfs-hub/repo/@git-lfs-hub/ci-cd
+
+[license-badge]: https://badgen.net/github/license/git-lfs-hub/ci-cd
+[license-href]: LICENSE.md
