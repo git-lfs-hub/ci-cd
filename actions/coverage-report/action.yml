@@ -17,7 +17,7 @@ runs:
       run: |
         mkdir coverage/main
         for f in coverage-summary.json coverage-final.json; do
-          curl -fL "${{ inputs.coverage-url }}/$f" -o "coverage/main/$f"
+          curl -fL --no-progress-meter "${{ inputs.coverage-url }}/$f" -o "coverage/main/$f"
         done
         echo "main-json-summary=coverage/main/coverage-summary.json" >> "$GITHUB_OUTPUT"
       shell: bash
