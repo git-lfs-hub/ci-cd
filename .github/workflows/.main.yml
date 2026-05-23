@@ -2,15 +2,27 @@ name: Main
 
 on:
   push: { branches: [main] }
-  pull_request:
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
-  lint:
-    name: Lint
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
+      - uses: ./actions/init-bun
+
       - uses: raven-actions/actionlint@v2
+
+      - run: bun run test-coverage
+
+      - uses: ./actions/coverage-artifact
+
+  coverage-deploy:
+    name: Coverage
+    needs: test
+    uses: git-lfs-hub/ci-cd/.github/workflows/coverage-deploy.yml@main
+    permissions: { contents: read, pages: write, id-token: write }

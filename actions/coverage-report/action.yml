@@ -13,11 +13,13 @@ runs:
   using: composite
   steps:
     - name: Download Main Coverage
+      id: main-coverage
       run: |
         mkdir coverage/main
         for f in coverage-summary.json coverage-final.json; do
-          curl -L "${{ inputs.coverage-url }}/$f" -o "coverage/main/$f"
+          curl -fL --no-progress-meter "${{ inputs.coverage-url }}/$f" -o "coverage/main/$f"
         done
+        echo "main-json-summary=coverage/main/coverage-summary.json" >> "$GITHUB_OUTPUT"
       shell: bash
       continue-on-error: true
 
@@ -30,5 +32,5 @@ runs:
       uses: davelosert/vitest-coverage-report-action@v2
       with:
         file-coverage-mode: changes-affected
-        json-summary-compare-path: coverage/main/coverage-summary.json
+        json-summary-compare-path: ${{ steps.main-coverage.outputs.main-json-summary }}
         threshold-icons: ${{ steps.icons.outputs.threshold-icons }}
