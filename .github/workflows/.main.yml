@@ -13,13 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: git-lfs-hub/ci-cd/actions/init-bun@main
+      - uses: ./actions/init-bun
 
       - uses: raven-actions/actionlint@v2
 
       - run: bun run test-coverage
 
-      - uses: git-lfs-hub/ci-cd/actions/coverage-artifact@main
+      - uses: ./actions/coverage-artifact
 
   coverage-deploy:
     name: Coverage

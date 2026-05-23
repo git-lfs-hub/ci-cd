@@ -13,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: git-lfs-hub/ci-cd/actions/init-bun@main
+      - uses: ./actions/init-bun
 
       - uses: raven-actions/actionlint@v2
 
       - run: bun run test-coverage
 
-      - uses: git-lfs-hub/ci-cd/actions/coverage-report@main
+      - uses: ./actions/coverage-report
         with:
           coverage-url: https://git-lfs-hub.github.io/ci-cd
