@@ -28,13 +28,13 @@ export function summaryOutputLine(summaryPath: string) {
 
 export async function main(baseUrl: string, outputPath: string) {
   const results = await download(baseUrl, "coverage/main");
-  const summaryPath = results.find((p) => p.endsWith("coverage-summary.json"));
-  if (summaryPath) {
-    await Bun.file(outputPath).writer().write(summaryOutputLine(summaryPath) + "\n");
-  }
+  const summaryPath = results.find((p) => p.endsWith("coverage-summary.json"))!;
+  await Bun.file(outputPath)
+    .writer()
+    .write(summaryOutputLine(summaryPath) + "\n");
 }
 
-// istanbul ignore next
+/* istanbul ignore next */
 if (import.meta.main) {
   const baseUrl = process.argv[2];
   const outputPath = process.env.GITHUB_OUTPUT;
