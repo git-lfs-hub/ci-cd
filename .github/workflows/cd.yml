@@ -20,12 +20,12 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: ./ci-cd/actions/init
+        uses: git-lfs-hub/ci-cd/actions/init@main
 
       - name: Deploy Prod
-        uses: ./ci-cd/actions/cd
+        uses: git-lfs-hub/ci-cd/actions/cd@main
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Turbo Summary
-        uses: ./ci-cd/actions/turbo-summary
+        uses: git-lfs-hub/ci-cd/actions/turbo-summary@main

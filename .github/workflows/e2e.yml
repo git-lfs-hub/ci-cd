@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   e2e:
-    name: "E2E"
+    name: E2E
     runs-on: ubuntu-latest
     concurrency:
       group: lfs-server-prod-e2e
@@ -26,10 +26,10 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: ./ci-cd/actions/init
+        uses: git-lfs-hub/ci-cd/actions/init@main
 
-      - name: Run E2E Tests
-        uses: ./ci-cd/actions/e2e-test
+      - name: Test
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_LOGIN_SECRET }}

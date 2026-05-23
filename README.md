@@ -6,12 +6,12 @@ For the bigger picture (what the stack does, the deploy flow, the other repos) s
 
 Consumed by [git-lfs-hub/deploy](https://github.com/git-lfs-hub/deploy):
 
-- as a **git submodule** at `deploy/ci-cd/` — composite actions invoked via local paths (`./ci-cd/actions/*`)
 - as **reusable workflows** at `git-lfs-hub/ci-cd/.github/workflows/*.yml@<ref>` — invoked from `deploy/.github/workflows/pr.yml` and `main.yml`
+- as **composite actions** at `git-lfs-hub/ci-cd/actions/*@<ref>` — fetched directly by GitHub Actions (no submodule required in caller)
 
 ## Setup and Deployment
 
-To wire CI/CD into a deploy checkout, add this repo as a submodule at `ci-cd/` (see [deploy `.gitmodules`](https://github.com/git-lfs-hub/deploy/blob/main/.gitmodules)) and call the reusable workflows from thin caller workflows under `.github/workflows/`. Reusable workflow jobs check out the caller repo with `submodules: recursive` so `config/`, `server/`, `docs/`, `e2e/`, and `ci-cd/` are all present on the runner.
+To wire CI/CD into a deploy checkout, call the reusable workflows from thin caller workflows under `.github/workflows/`. Reusable workflow jobs check out the caller repo with `submodules: recursive` so `config/`, `server/`, `docs/`, and `e2e/` are present on the runner. Composite actions are fetched directly by GitHub Actions from `git-lfs-hub/ci-cd/actions/*@<ref>` — no `ci-cd` submodule needed in the caller.
 
 Pin workflow refs to `@main` (floating), a tag, or a commit SHA. Full secrets and staging setup for [git-lfs-hub/deploy](https://github.com/git-lfs-hub/deploy) are documented in [deploy/README.md — GitHub Actions](https://github.com/git-lfs-hub/deploy#github-actions).
 
@@ -73,7 +73,6 @@ Production smoke after deploy uses composite actions directly in the caller work
 
 - **Turbo monorepo** at the checkout root: `vars.input.json` (or `GLH_VARS_JSON`), `server/`, `config/`, `docs/`, `e2e/` submodules
 - **`e2e/` workspace** registered in root `package.json` so `bun install --frozen-lockfile` installs vitest into `e2e/node_modules`
-- **`ci-cd/` submodule** at `./ci-cd/` for `./ci-cd/actions/*` paths used inside reusable workflow jobs
 
 ## Composite actions
 
@@ -89,6 +88,6 @@ Production smoke after deploy uses composite actions directly in the caller work
 
 ## Cross-repo layout
 
-Reusable workflows reference actions with **repository-relative** paths (`./ci-cd/actions/*`). The caller checkout must include the `ci-cd` submodule; `actions/checkout` must use `submodules: recursive`.
+Reusable workflows reference composite actions via repo refs (`git-lfs-hub/ci-cd/actions/*@<ref>`) so they are fetched directly from GitHub Actions. The caller does not need a `ci-cd` submodule, but `actions/checkout` still needs `submodules: recursive` for `config/`, `server/`, `docs/`, and `e2e/`.
 
 E2e tests live in [git-lfs-hub/e2e](https://github.com/git-lfs-hub/e2e) (`deploy/e2e/`). See [e2e/README.md](https://github.com/git-lfs-hub/e2e) for test behavior, env vars, and the `encryptCode` import from `server/`.

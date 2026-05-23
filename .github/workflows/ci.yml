@@ -20,10 +20,10 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: ./ci-cd/actions/init
+        uses: git-lfs-hub/ci-cd/actions/init@main
 
       - name: Test
         run: bunx turbo run test build
 
       - name: Turbo Summary
-        uses: ./ci-cd/actions/turbo-summary
+        uses: git-lfs-hub/ci-cd/actions/turbo-summary@main
