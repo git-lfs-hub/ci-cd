@@ -1,0 +1,29 @@
+name: Init vars
+description: Write JSON contents to the given file
+
+inputs:
+  vars-json:
+    description: JSON contents to write
+    required: true
+
+  file:
+    description: Path to write the contents to
+    required: false
+    default: vars.json
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure vars-json is not empty
+      if: inputs.vars-json == ''
+      run: |
+        echo "::error::Commit vars[.input].json or set vars|secret.GLH_VARS_JSON from `bun run config`."
+        exit 1
+      shell: bash
+
+    - name: Initialize vars
+      env:
+        VARS_JSON: ${{ inputs.vars-json }}
+        VARS_FILE: ${{ inputs.file }}
+      run: printf '%s\n' "$VARS_JSON" > "$VARS_FILE"
+      shell: bash

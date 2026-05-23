@@ -1,14 +1,15 @@
-name: Lint
+name: Main
 
 on:
+  push: { branches: [main] }
   pull_request:
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
-  actionlint:
-    name: Actions
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

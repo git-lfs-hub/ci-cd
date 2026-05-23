@@ -28,7 +28,7 @@ jobs:
         uses: git-lfs-hub/ci-cd/actions/init-staging@main
 
       - name: Deploy Staging
-        uses: git-lfs-hub/ci-cd/actions/cd@main
+        uses: git-lfs-hub/ci-cd/actions/deploy@main
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 

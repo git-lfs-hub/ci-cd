@@ -20,10 +20,10 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: git-lfs-hub/ci-cd/actions/init@main
+        uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 
       - name: Deploy Prod
-        uses: git-lfs-hub/ci-cd/actions/cd@main
+        uses: git-lfs-hub/ci-cd/actions/deploy@main
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
