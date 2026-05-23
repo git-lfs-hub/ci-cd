@@ -27,7 +27,11 @@ export async function main(thresholdsJson: string) {
   const raw: Record<string, string> = JSON.parse(thresholdsJson);
   const thresholds = parseThresholds(raw);
   const color = resolveColor(pct, thresholds);
-  await Bun.write("coverage/badge.json", JSON.stringify(makeBadge(pct, color)));
+  await Bun.write(
+    "coverage/coverage-badge.json",
+    JSON.stringify(makeBadge(pct, color)),
+  );
+  console.log("::notice file=coverage/coverage-badge.json::File written");
 }
 
 // istanbul ignore next
