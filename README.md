@@ -23,11 +23,11 @@ Pin workflow refs to `@main` (floating), a tag, or a commit SHA. Full secrets an
 | `.github/workflows/cd.yml` | Checkout + init + `turbo run deploy` + Turbo summary |
 | `.github/workflows/staging.yml` | Staging vars render + deploy `lfs-server-staging` + e2e (single job; PR head SHA) |
 
-All three are `workflow_call` entry points. They read `GLH_VARS_JSON` from caller `vars`/`secrets` (or committed `vars[.input].json`) unless `staging.yml` receives prod vars via `inputs.vars-json`.
+All three are `workflow_call` entry points. They read `GLH_VARS_JSON` from caller `vars`/`secrets` (or committed `vars[.input].json`).
 
 ### `staging.yml`
 
-`workflow_call` with one input — the caller's existing `GLH_VARS_JSON` — and derives staging values internally by appending `-staging` to `cloudflare.workerName` and `s3.bucket`. **No separate `GLH_STAGING_VARS_JSON` needed.**
+`workflow_call` with no inputs. Reads `GLH_VARS_JSON` from caller `vars`/`secrets` and derives staging values internally by appending `-staging` to `cloudflare.workerName` and `s3.bucket`. **No separate `GLH_STAGING_VARS_JSON` needed.**
 
 Concurrency group `lfs-server-staging-e2e` (queue depth 1) because deploy and e2e share one staging Worker.
 
@@ -35,7 +35,7 @@ Concurrency group `lfs-server-staging-e2e` (queue depth 1) because deploy and e2
 
 | Input / secret | Used by | Description |
 |:---------------|:--------|:------------|
-| `inputs.vars-json` | `init-staging` | Caller's `GLH_VARS_JSON` (prod `vars.input.json` contents) |
+| `vars`/`secrets.GLH_VARS_JSON` | `init-staging` | Prod `vars.input.json` contents |
 | `secrets.CLOUDFLARE_API_TOKEN` | `cd` | Wrangler deploy auth |
 | `secrets.GLH_STAGING_GITHUB_PAT` | `e2e-test` | Write on `git-lfs-hub/test`; org-mode requires `read:org` |
 | `secrets.GLH_STAGING_LOGIN_SECRET` | `e2e-test` | Must match `LOGIN_SECRET` on `lfs-server-staging` |
@@ -48,8 +48,6 @@ staging:
   needs: ci
   if: github.event.pull_request.head.repo.full_name == github.repository
   uses: git-lfs-hub/ci-cd/.github/workflows/staging.yml@main
-  with:
-    vars-json: ${{ vars.GLH_VARS_JSON }}
   secrets: inherit
 ```
 
