@@ -14,12 +14,7 @@ runs:
   steps:
     - name: Download Main Coverage
       id: main-coverage
-      run: |
-        mkdir coverage/main
-        for f in coverage-summary.json coverage-final.json; do
-          curl -fL --no-progress-meter "${{ inputs.coverage-url }}/$f" -o "coverage/main/$f"
-        done
-        echo "main-json-summary=coverage/main/coverage-summary.json" >> "$GITHUB_OUTPUT"
+      run: bun "$GITHUB_ACTION_PATH/download-main-coverage.ts" '${{ inputs.coverage-url }}'
       shell: bash
       continue-on-error: true
 
