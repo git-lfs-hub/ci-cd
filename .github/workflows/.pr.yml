@@ -20,5 +20,3 @@ jobs:
       - run: bun run test-coverage
 
       - uses: ./actions/coverage-report
-        with:
-          coverage-url: https://git-lfs-hub.github.io/ci-cd
