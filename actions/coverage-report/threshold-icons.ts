@@ -27,9 +27,7 @@ export async function main(thresholdsJson: string, outputPath: string) {
   const thresholds: Record<string, string> = JSON.parse(thresholdsJson);
   const icons = buildThresholdIcons(thresholds);
   const output = formatOutput(icons);
-  await Bun.file(outputPath)
-    .writer()
-    .write(output + "\n");
+  await Bun.write(outputPath, output + "\n");
 }
 
 /* istanbul ignore next */
