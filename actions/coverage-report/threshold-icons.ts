@@ -32,7 +32,7 @@ export async function main(thresholdsJson: string, outputPath: string) {
     .write(output + "\n");
 }
 
-// istanbul ignore next
+/* istanbul ignore next */
 if (import.meta.main) {
   await main(process.argv[2] ?? "", process.env.GITHUB_OUTPUT!);
 }

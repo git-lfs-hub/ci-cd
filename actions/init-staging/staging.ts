@@ -59,21 +59,32 @@ export async function validateWranglerJson(
   }
 }
 
-// istanbul ignore next
-if (import.meta.main) {
-  const cmd = process.argv[2];
+export async function main(
+  cmd: string | undefined,
+  args: {
+    varsJson: string;
+    outPath: string;
+    varsPath: string;
+    wranglerPath: string;
+  },
+) {
   if (cmd === "create-vars-input-json") {
-    const varsJson = process.env.GLH_VARS_JSON ?? "";
-    const outPath = process.argv[3] ?? "vars.input.json";
-    await createVarsInputJson(varsJson, outPath);
+    await createVarsInputJson(args.varsJson, args.outPath);
   } else if (cmd === "validate-wrangler-json") {
-    const varsPath = process.argv[3] ?? "vars.json";
-    const wranglerPath = process.argv[4] ?? "wrangler.jsonc";
-    await validateWranglerJson(varsPath, wranglerPath);
+    await validateWranglerJson(args.varsPath, args.wranglerPath);
   } else {
-    console.error(
+    throw new Error(
       "Usage: staging.ts <create-vars-input-json|validate-wrangler-json>",
     );
-    process.exit(1);
   }
+}
+
+/* istanbul ignore next */
+if (import.meta.main) {
+  await main(process.argv[2], {
+    varsJson: process.env.GLH_VARS_JSON ?? "",
+    outPath: process.argv[3] ?? "vars.input.json",
+    varsPath: process.argv[3] ?? "vars.json",
+    wranglerPath: process.argv[4] ?? "wrangler.jsonc",
+  });
 }

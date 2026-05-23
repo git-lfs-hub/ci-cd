@@ -3,6 +3,7 @@ import {
   applyStagingSuffix,
   createVarsInputJson,
   validateWranglerJson,
+  main,
   type Vars,
 } from "./staging";
 import { join } from "node:path";
@@ -151,5 +152,75 @@ describe("validateWranglerJson", () => {
     await expect(
       validateWranglerJson(varsPath, wranglerPath),
     ).rejects.toThrow(/mismatch.*suffix/s);
+  });
+});
+
+describe("main", () => {
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    tmpDir = await mkdtemp(join(tmpdir(), "staging-main-test-"));
+  });
+
+  afterEach(async () => {
+    await rm(tmpDir, { recursive: true });
+    vi.restoreAllMocks();
+  });
+
+  test("dispatches create-vars-input-json", async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const outPath = join(tmpDir, "vars.input.json");
+    const varsJson = JSON.stringify({ cloudflare: { workerName: "w" } });
+
+    await main("create-vars-input-json", {
+      varsJson,
+      outPath,
+      varsPath: "",
+      wranglerPath: "",
+    });
+
+    const written = await Bun.file(outPath).json();
+    expect(written.cloudflare.workerName).toBe("w-staging");
+  });
+
+  test("dispatches validate-wrangler-json", async () => {
+    const varsPath = join(tmpDir, "vars.json");
+    const wranglerPath = join(tmpDir, "wrangler.jsonc");
+    await Bun.write(
+      varsPath,
+      JSON.stringify({ cloudflare: { workerName: "app-staging" } }),
+    );
+    await Bun.write(wranglerPath, JSON.stringify({ name: "app-staging" }));
+
+    await expect(
+      main("validate-wrangler-json", {
+        varsJson: "",
+        outPath: "",
+        varsPath,
+        wranglerPath,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  test("throws on unknown command", async () => {
+    await expect(
+      main("bogus", {
+        varsJson: "",
+        outPath: "",
+        varsPath: "",
+        wranglerPath: "",
+      }),
+    ).rejects.toThrow("Usage:");
+  });
+
+  test("throws on undefined command", async () => {
+    await expect(
+      main(undefined, {
+        varsJson: "",
+        outPath: "",
+        varsPath: "",
+        wranglerPath: "",
+      }),
+    ).rejects.toThrow("Usage:");
   });
 });
