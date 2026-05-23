@@ -1,7 +1,6 @@
 # Git LFS Hub — ci-cd
 
 [![CI][ci-badge]][gh-wf-href]
-[![Coverage][coverage-badge]][coverage-href]
 [![CodeQL][codeql-badge]][codeql-href]
 [![Socket][socket-badge]][socket-href]
 [![License][license-badge]][license-href]
