@@ -12,9 +12,9 @@ import { tmpdir } from "node:os";
 describe("parseThresholds", () => {
   test("sorts descending by min", () => {
     const result = parseThresholds({
-      "50": "orange",
-      "90": "green",
-      "80": "yellow",
+      50: "orange",
+      90: "green",
+      80: "yellow",
     });
     expect(result).toEqual([
       { min: 90, color: "green" },
@@ -24,7 +24,7 @@ describe("parseThresholds", () => {
   });
 
   test("handles single entry", () => {
-    const result = parseThresholds({ "0": "grey" });
+    const result = parseThresholds({ 0: "grey" });
     expect(result).toEqual([{ min: 0, color: "grey" }]);
   });
 
@@ -35,11 +35,11 @@ describe("parseThresholds", () => {
 
 describe("resolveColor", () => {
   const thresholds = parseThresholds({
-    "90": "green",
-    "80": "yellow",
-    "50": "orange",
-    "1": "red",
-    "0": "grey",
+    90: "green",
+    80: "yellow",
+    50: "orange",
+    1: "red",
+    0: "grey",
   });
 
   test("returns green for 95%", () => {
@@ -123,7 +123,7 @@ describe("main", () => {
 
   test("reads summary, resolves color, writes badge.json", async () => {
     const spy = vi.spyOn(console, "log").mockImplementation(() => {});
-    await main(JSON.stringify({ "90": "green", "80": "yellow", "0": "red" }));
+    await main(JSON.stringify({ 90: "green", 80: "yellow", 0: "red" }));
     const badge = await Bun.file(
       join(tmpDir, "coverage/coverage-badge.json"),
     ).json();

@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
 
 import process from "node:process";
-export {}; // shuts up the `await` .ts errors
+import { type Thresholds, DEFAULT_THRESHOLDS } from "../coverage-defaults";
+export {};
 
-export function parseThresholds(raw: Record<string, string>) {
+export function parseThresholds(raw: Thresholds) {
   return Object.entries(raw)
     .map(([min, color]) => ({ min: Number(min), color: color as string }))
     .sort((a, b) => b.min - a.min);
@@ -24,7 +25,9 @@ export async function main(thresholdsJson: string) {
   const summary = await Bun.file("coverage/coverage-summary.json").json();
   const pct = summary.total.statements.pct as number;
 
-  const raw: Record<string, string> = JSON.parse(thresholdsJson);
+  const raw: Thresholds = thresholdsJson
+    ? JSON.parse(thresholdsJson)
+    : DEFAULT_THRESHOLDS;
   const thresholds = parseThresholds(raw);
   const color = resolveColor(pct, thresholds);
   await Bun.write(

@@ -14,34 +14,34 @@ describe("COLOR_ICON", () => {
 
 describe("buildThresholdIcons", () => {
   test("maps thresholds to icons", () => {
-    const result = buildThresholdIcons({ "90": "green", "80": "yellow" });
+    const result = buildThresholdIcons({ 90: "green", 80: "yellow" });
     expect(result).toContain(`90: '${COLOR_ICON["green"]}'`);
     expect(result).toContain(`80: '${COLOR_ICON["yellow"]}'`);
   });
 
   test("adds 100 entry when missing", () => {
-    const result = buildThresholdIcons({ "90": "green" });
+    const result = buildThresholdIcons({ 90: "green" });
     expect(result).toContain(`100: '${COLOR_ICON["100"]}'`);
   });
 
   test("preserves existing 100 entry", () => {
-    const result = buildThresholdIcons({ "100": "green", "90": "yellow" });
+    const result = buildThresholdIcons({ 100: "green", 90: "yellow" });
     expect(result).toContain(`100: '${COLOR_ICON["green"]}'`);
     expect(result).not.toContain(COLOR_ICON["100"]);
   });
 
   test("falls back to ⬜ for unknown color", () => {
-    const result = buildThresholdIcons({ "50": "purple" });
+    const result = buildThresholdIcons({ 50: "purple" });
     expect(result).toContain("50: '⬜'");
   });
 
   test("handles full typical config", () => {
     const result = buildThresholdIcons({
-      "90": "green",
-      "80": "yellow",
-      "50": "orange",
-      "1": "red",
-      "0": "grey",
+      90: "green",
+      80: "yellow",
+      50: "orange",
+      1: "red",
+      0: "grey",
     });
     expect(result).toContain(`90: '${COLOR_ICON["green"]}'`);
     expect(result).toContain(`80: '${COLOR_ICON["yellow"]}'`);
@@ -72,7 +72,7 @@ describe("main", () => {
   });
 
   test("writes threshold-icons to output file", async () => {
-    await main(JSON.stringify({ "90": "green", "80": "yellow" }), outputFile);
+    await main(JSON.stringify({ 90: "green", 80: "yellow" }), outputFile);
     const content = await Bun.file(outputFile).text();
     expect(content).toContain("threshold-icons={");
     expect(content).toContain(`90: '${COLOR_ICON["green"]}'`);

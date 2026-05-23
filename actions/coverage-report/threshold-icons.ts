@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import process from "node:process";
+import { type Thresholds, DEFAULT_THRESHOLDS } from "../coverage-defaults";
 export {};
 
 export const COLOR_ICON: Record<string, string> = {
@@ -12,8 +13,8 @@ export const COLOR_ICON: Record<string, string> = {
   grey: "⬜", // gray circle
 };
 
-export function buildThresholdIcons(thresholds: Record<string, string>) {
-  if (!("100" in thresholds)) thresholds["100"] = "100";
+export function buildThresholdIcons(thresholds: Thresholds) {
+  if (!(100 in thresholds)) thresholds[100] = "100";
   return Object.entries(thresholds)
     .map(([pct, color]) => `${pct}: '${COLOR_ICON[color] ?? "⬜"}'`)
     .join(", ");
@@ -24,7 +25,9 @@ export function formatOutput(icons: string) {
 }
 
 export async function main(thresholdsJson: string, outputPath: string) {
-  const thresholds: Record<string, string> = JSON.parse(thresholdsJson);
+  const thresholds: Thresholds = thresholdsJson
+    ? JSON.parse(thresholdsJson)
+    : DEFAULT_THRESHOLDS;
   const icons = buildThresholdIcons(thresholds);
   const output = formatOutput(icons);
   await Bun.write(outputPath, output + "\n");
