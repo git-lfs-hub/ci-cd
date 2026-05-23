@@ -8,8 +8,8 @@ on:
 permissions: {}
 
 jobs:
-  actionlint:
-    name: Actions
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
