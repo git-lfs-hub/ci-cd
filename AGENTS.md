@@ -20,7 +20,7 @@ Default to using Bun instead of Node.js.
 
 ## Testing
 
-Use `bunx --bun vitest` (not `bun test`) to run tests. OK to use `Bun` API in tests directly.
+Use `bunx --bun vitest` to run tests (not `bun test`, `bunx vitest` or `vitest`). OK to use `Bun` API in tests directly.
 
 ```ts#index.test.ts
 import { test, expect } from "vitest";

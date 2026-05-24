@@ -112,6 +112,23 @@ describe("validateWranglerJson", () => {
     ).resolves.toBeUndefined();
   });
 
+  test("parses JSONC with comments and trailing commas", async () => {
+    const varsPath = join(tmpDir, "vars.json");
+    const wranglerPath = join(tmpDir, "wrangler.jsonc");
+    await Bun.write(
+      varsPath,
+      JSON.stringify({ cloudflare: { workerName: "app-staging" } }),
+    );
+    await Bun.write(
+      wranglerPath,
+      `// top-level comment\n{ "name": "app-staging", /* inline */ }\n`,
+    );
+
+    await expect(
+      validateWranglerJson(varsPath, wranglerPath),
+    ).resolves.toBeUndefined();
+  });
+
   test("throws on name mismatch", async () => {
     const varsPath = join(tmpDir, "vars.json");
     const wranglerPath = join(tmpDir, "wrangler.jsonc");
