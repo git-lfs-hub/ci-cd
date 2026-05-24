@@ -3,8 +3,7 @@ description: Generate coverage badge and upload coverage/ as a Pages artifact.
 
 inputs:
   thresholds:
-    description: 'JSON dict mapping minimum percentage to color, e.g. {"90": "green", "80": "yellow"}'
-    default: '{"90": "green", "80": "yellow", "50": "orange", "1": "red", "0": "grey"}'
+    description: 'JSON dict mapping minimum percentage to color, e.g. {"90": "green", "80": "yellow"}. Defaults in actions/coverage-defaults.ts.'
 
 runs:
   using: composite
