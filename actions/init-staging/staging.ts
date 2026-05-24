@@ -41,9 +41,9 @@ export async function validateWranglerJson(
   wranglerPath: string,
 ) {
   const vars: Vars = await Bun.file(varsPath).json();
-  const wrangler = await Bun.file(wranglerPath).json();
+  const wrangler = Bun.JSONC.parse(await Bun.file(wranglerPath).text()) as Record<string, unknown>;
   const varName: string = vars.cloudflare?.workerName ?? "";
-  const wranglerName: string = wrangler.name ?? "";
+  const wranglerName = String(wrangler.name ?? "");
 
   const errors: string[] = [];
   if (varName !== wranglerName) {

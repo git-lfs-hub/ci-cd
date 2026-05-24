@@ -8,13 +8,21 @@ description: |
 runs:
   using: composite
   steps:
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: "server/package.json"
+
+    - uses: git-lfs-hub/ci-cd/actions/init-bun@main
+
     - name: Build staging vars (append -staging suffix)
       shell: bash
       run: |
         rm -f vars.input.json vars.json wrangler.jsonc github-app.md
         bun "$GITHUB_ACTION_PATH/staging.ts" create-vars-input-json
 
-    - uses: git-lfs-hub/ci-cd/actions/init-deploy@main
+    # Render vars.json and wrangler.jsonc
+    - run: bun run config
+      shell: bash
 
     - name: Sanity-check rendered Worker name
       shell: bash
