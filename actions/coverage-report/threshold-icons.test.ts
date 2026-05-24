@@ -1,5 +1,10 @@
 import { test, expect, describe, beforeEach, afterEach } from "vitest";
-import { COLOR_ICON, buildThresholdIcons, formatOutput, main } from "./threshold-icons";
+import {
+  COLOR_ICON,
+  thresholdIcons,
+  formatOutput,
+  main,
+} from "./threshold-icons";
 import { join } from "node:path";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -12,31 +17,31 @@ describe("COLOR_ICON", () => {
   });
 });
 
-describe("buildThresholdIcons", () => {
+describe("thresholdIcons", () => {
   test("maps thresholds to icons", () => {
-    const result = buildThresholdIcons({ 90: "green", 80: "yellow" });
+    const result = thresholdIcons({ 90: "green", 80: "yellow" });
     expect(result).toContain(`90: '${COLOR_ICON["green"]}'`);
     expect(result).toContain(`80: '${COLOR_ICON["yellow"]}'`);
   });
 
   test("adds 100 entry when missing", () => {
-    const result = buildThresholdIcons({ 90: "green" });
+    const result = thresholdIcons({ 90: "green" });
     expect(result).toContain(`100: '${COLOR_ICON["100"]}'`);
   });
 
   test("preserves existing 100 entry", () => {
-    const result = buildThresholdIcons({ 100: "green", 90: "yellow" });
+    const result = thresholdIcons({ 100: "green", 90: "yellow" });
     expect(result).toContain(`100: '${COLOR_ICON["green"]}'`);
     expect(result).not.toContain(COLOR_ICON["100"]);
   });
 
   test("falls back to ⬜ for unknown color", () => {
-    const result = buildThresholdIcons({ 50: "purple" });
+    const result = thresholdIcons({ 50: "purple" });
     expect(result).toContain("50: '⬜'");
   });
 
   test("handles full typical config", () => {
-    const result = buildThresholdIcons({
+    const result = thresholdIcons({
       90: "green",
       80: "yellow",
       50: "orange",
@@ -52,7 +57,7 @@ describe("buildThresholdIcons", () => {
   });
 
   test("handles empty object (only adds 100)", () => {
-    const result = buildThresholdIcons({});
+    const result = thresholdIcons({});
     expect(result).toBe(`100: '${COLOR_ICON["100"]}'`);
   });
 });

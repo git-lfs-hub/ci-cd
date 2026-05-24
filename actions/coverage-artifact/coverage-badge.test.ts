@@ -1,6 +1,6 @@
 import { test, expect, describe, beforeEach, afterEach, vi } from "vitest";
 import {
-  parseThresholds,
+  sortedThresholds,
   resolveColor,
   makeBadge,
   main,
@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 
 describe("parseThresholds", () => {
   test("sorts descending by min", () => {
-    const result = parseThresholds({
+    const result = sortedThresholds({
       50: "orange",
       90: "green",
       80: "yellow",
@@ -24,17 +24,17 @@ describe("parseThresholds", () => {
   });
 
   test("handles single entry", () => {
-    const result = parseThresholds({ 0: "grey" });
+    const result = sortedThresholds({ 0: "grey" });
     expect(result).toEqual([{ min: 0, color: "grey" }]);
   });
 
   test("handles empty object", () => {
-    expect(parseThresholds({})).toEqual([]);
+    expect(sortedThresholds({})).toEqual([]);
   });
 });
 
 describe("resolveColor", () => {
-  const thresholds = parseThresholds({
+  const thresholds = sortedThresholds({
     90: "green",
     80: "yellow",
     50: "orange",
@@ -135,6 +135,20 @@ describe("main", () => {
     expect(spy).toHaveBeenCalledWith(
       "::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json",
     );
+    spy.mockRestore();
+  });
+
+  test("uses DEFAULT_THRESHOLDS when thresholdsJson is empty", async () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => {});
+    await main("");
+    const badge = await Bun.file(
+      join(tmpDir, "coverage/coverage-badge.json"),
+    ).json();
+    expect(badge).toEqual({
+      subject: "Coverage",
+      status: "85.5%",
+      color: "orange",
+    });
     spy.mockRestore();
   });
 });

@@ -7,3 +7,7 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
   1: "red",
   0: "grey",
 };
+
+export function resolveThresholds(json: string): Thresholds {
+  return json ? JSON.parse(json) : DEFAULT_THRESHOLDS;
+}

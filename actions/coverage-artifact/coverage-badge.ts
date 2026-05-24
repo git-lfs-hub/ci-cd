@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
 import process from "node:process";
-import { type Thresholds, DEFAULT_THRESHOLDS } from "../coverage-defaults";
+import { type Thresholds, resolveThresholds } from "../coverage-defaults";
 export {};
 
-export function parseThresholds(raw: Thresholds) {
+export function sortedThresholds(raw: Thresholds) {
   return Object.entries(raw)
     .map(([min, color]) => ({ min: Number(min), color: color as string }))
     .sort((a, b) => b.min - a.min);
@@ -25,16 +25,15 @@ export async function main(thresholdsJson: string) {
   const summary = await Bun.file("coverage/coverage-summary.json").json();
   const pct = summary.total.statements.pct as number;
 
-  const raw: Thresholds = thresholdsJson
-    ? JSON.parse(thresholdsJson)
-    : DEFAULT_THRESHOLDS;
-  const thresholds = parseThresholds(raw);
+  const thresholds = sortedThresholds(resolveThresholds(thresholdsJson));
   const color = resolveColor(pct, thresholds);
   await Bun.write(
     "coverage/coverage-badge.json",
     JSON.stringify(makeBadge(pct, color)),
   );
-  console.log("::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json");
+  console.log(
+    "::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json",
+  );
 }
 
 /* istanbul ignore next */
