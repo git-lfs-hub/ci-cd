@@ -1,0 +1,17 @@
+name: Set up ../auth
+description: Set up @git-lfs-hub/auth to ../auth
+
+runs:
+  using: composite
+  steps:
+    # 1. Check out the auth package to a temporary folder
+    - name: Check out auth
+      uses: actions/checkout@v4
+      with:
+        repository: git-lfs-hub/auth
+        path: auth.tmp
+
+    # 2. Move auth to ../auth so that it's resolvable
+    - name: Set up sibling ../auth dependency
+      run: mv auth.tmp ../auth
+      shell: bash
