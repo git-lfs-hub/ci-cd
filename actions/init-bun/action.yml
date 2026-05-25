@@ -1,4 +1,4 @@
-name: Init
+name: Init Bun
 description: Set up Bun and install dependencies
 
 runs:
