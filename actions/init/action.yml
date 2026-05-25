@@ -1,0 +1,34 @@
+name: Init Bun with peers
+description: Set up @git-lfs-hub/{peer} to ../{peer} and run `bun install` for the host and ../{peer}
+
+inputs:
+  peers:
+    description: Peer @git-lfs-hub packages, e.g. 'auth'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Check out the auth package to a temporary folder
+    - name: Check out auth
+      if: contains(inputs.peers, 'auth')
+      uses: actions/checkout@v6
+      with:
+        repository: git-lfs-hub/auth
+        path: auth-tmp
+
+    # Move auth to ../auth so that it's resolvable by `bun install`
+    - name: Set up sibling ../auth
+      if: contains(inputs.peers, 'auth')
+      run: mv auth-tmp ../auth
+      shell: bash
+
+    # Install bun and run host `bun install`
+    - uses: git-lfs-hub/ci-cd/actions/init-bun@main
+
+    # Run `bun install` for ..auth
+    - name: Install ../auth bun dependencies
+      if: contains(inputs.peers, 'auth')
+      run: bun install --frozen-lockfile
+      working-directory: ../auth
+      shell: bash
