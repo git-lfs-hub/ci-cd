@@ -20,7 +20,7 @@ runs:
     # Move auth to ../auth so that it's resolvable by `bun install`
     - name: Set up sibling ../auth
       if: contains(inputs.peers, 'auth')
-      run: mv authtmp ../auth
+      run: mv auth-tmp ../auth
       shell: bash
 
     # Install bun and run host `bun install`
