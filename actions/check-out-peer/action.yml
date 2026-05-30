@@ -1,18 +1,35 @@
 name: Check out peer
-description: Check out @git-lfs-hub/{peer} to ../{peer}
+description: Check out @git-lfs-hub/{peer} to ../{peer}, at ref from {refs} if given
 
 inputs:
   peer:
     description: Peer @git-lfs-hub package, e.g. 'lib'
     required: true
+  refs:
+    description: "Peer ref specs, e.g. 'lib@cache-github server@foo'; ref for {peer} used, else default branch"
+    required: false
 
 runs:
   using: composite
   steps:
+    - name: Resolve ref
+      id: r
+      shell: bash
+      env:
+        PEER: ${{ inputs.peer }}
+        REFS: ${{ inputs.refs }}
+      run: |
+        ref=""
+        for spec in $REFS; do
+          [[ "$spec" == "$PEER@"* ]] && ref="${spec#*@}"
+        done
+        echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
     - name: Check out ${{ inputs.peer }}-tmp
       uses: actions/checkout@v6
       with:
         repository: git-lfs-hub/${{ inputs.peer }}
+        ref: ${{ steps.r.outputs.ref }}
         path: ${{ inputs.peer }}-tmp
 
     - name: Move it to ../${{ inputs.peer }}

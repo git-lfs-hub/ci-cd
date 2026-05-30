@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Check out lib
       uses: git-lfs-hub/ci-cd/actions/check-out-peer@main
-      with: { peer: lib }
+      with: { peer: lib, refs: '${{ inputs.peers }}' }
       if: contains(inputs.peers, 'lib')
 
     # Install bun and run host `bun install`
