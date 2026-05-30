@@ -1,0 +1,20 @@
+name: Check out peer
+description: Check out @git-lfs-hub/{peer} to ../{peer}
+
+inputs:
+  peer:
+    description: Peer @git-lfs-hub package, e.g. 'lib'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check out ${{ inputs.peer }}-tmp
+      uses: actions/checkout@v6
+      with:
+        repository: git-lfs-hub/${{ inputs.peer }}
+        path: ${{ inputs.peer }}-tmp
+
+    - name: Move it to ../${{ inputs.peer }}
+      run: mv ${{ inputs.peer }}-tmp ../${{ inputs.peer }}
+      shell: bash
