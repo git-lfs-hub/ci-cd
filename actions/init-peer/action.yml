@@ -1,0 +1,16 @@
+name: Init peer bun dependencies
+description: Run ../{peer}/bun install
+
+inputs:
+  peer:
+    description: Peer @git-lfs-hub package, e.g. 'lib'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Run `bun install` for ..{peer} packages
+    - name: Install ${{ inputs.peer }} bun dependencies
+      working-directory: ../${{ inputs.peer }}
+      run: bun install --frozen-lockfile
+      shell: bash
