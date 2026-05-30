@@ -10,7 +10,7 @@ runs:
   using: composite
   steps:
     - name: Check out lib
-      uses: git-lfs-hub/ci-cd/actions/check-out-peer@lib
+      uses: git-lfs-hub/ci-cd/actions/check-out-peer@main
       with: { peer: lib }
       if: contains(inputs.peers, 'lib')
 
@@ -18,6 +18,6 @@ runs:
     - uses: git-lfs-hub/ci-cd/actions/init-bun@main
 
     - name: Install lib bun dependencies
-      uses: git-lfs-hub/ci-cd/actions/init-peer@lib
+      uses: git-lfs-hub/ci-cd/actions/init-peer@main
       with: { peer: lib }
       if: contains(inputs.peers, 'lib')
