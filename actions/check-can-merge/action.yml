@@ -38,3 +38,15 @@ runs:
           fi
         done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
         exit $fail
+
+    # ci-cd actions and reusable workflows must be referenced @main, not a
+    # feature branch. Fine while a PR rides a ci-cd branch; repoint to @main
+    # before merging to main.
+    - name: ci-cd refs on main
+      shell: bash
+      run: |
+        if grep -rnoE 'git-lfs-hub/ci-cd/[^@ ]+@[A-Za-z0-9._/-]+' .github/workflows/ | grep -vE '@main$'; then
+          echo "::error::ci-cd ref not @main (above). Repoint to @main before merging to main."
+          exit 1
+        fi
+        echo "ok: ci-cd refs @main"
