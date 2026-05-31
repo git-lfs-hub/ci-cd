@@ -1,0 +1,52 @@
+name: Check can merge
+description: Gate merges to main. Required-status check; fails on conditions that are fine on a PR branch but must be resolved before merge.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        submodules: recursive
+
+    # Peers must not be pinned to a branch (e.g. 'lib@foo'). Fine while a PR
+    # rides a peer's branch; drop '@branch' to 'lib' before merging to main.
+    - name: Peers unpinned
+      shell: bash
+      run: |
+        if grep -rnE 'peers:[^#]*@' .github/workflows/; then
+          echo "::error::Peer pinned to a branch (above). Drop '@branch' (e.g. 'lib@foo' -> 'lib') before merging to main."
+          exit 1
+        fi
+        echo "ok: no branch-pinned peers"
+
+    # Submodules must point at a commit on their tracked branch (main), not a
+    # feature-branch-only commit. Fine on a PR; bump to a main commit to merge.
+    - name: Submodules on main
+      shell: bash
+      run: |
+        [ -f .gitmodules ] || { echo "ok: no submodules"; exit 0; }
+        fail=0
+        while read -r path; do
+          branch=$(git config -f .gitmodules "submodule.$path.branch" || echo main)
+          sha=$(git -C "$path" rev-parse HEAD)
+          git -C "$path" fetch -q origin "$branch"
+          if git -C "$path" merge-base --is-ancestor "$sha" "origin/$branch"; then
+            echo "ok: $path @ ${sha:0:8} on origin/$branch"
+          else
+            echo "::error::Submodule '$path' commit ${sha:0:8} is not on origin/$branch. Bump it to a $branch commit before merging."
+            fail=1
+          fi
+        done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')
+        exit $fail
+
+    # ci-cd actions and reusable workflows must be referenced @main, not a
+    # feature branch. Fine while a PR rides a ci-cd branch; repoint to @main
+    # before merging to main.
+    - name: ci-cd refs on main
+      shell: bash
+      run: |
+        if grep -rnoE 'git-lfs-hub/ci-cd/[^@ ]+@[A-Za-z0-9._/-]+' .github/workflows/ | grep -vE '@main$'; then
+          echo "::error::ci-cd ref not @main (above). Repoint to @main before merging to main."
+          exit 1
+        fi
+        echo "ok: ci-cd refs @main"
