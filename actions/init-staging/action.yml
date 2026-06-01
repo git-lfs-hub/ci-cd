@@ -1,9 +1,9 @@
 name: "Init staging render"
 description: |
-  Build staging vars.input.json by appending -staging to cloudflare.workerName
-  and s3.bucket, run the init action to render vars.json + wrangler.jsonc +
-  github-app.md, and sanity-check the result. Reads prod vars from
-  GLH_VARS_JSON env var (set by caller workflow).
+  Render staging artifacts (vars.json + wrangler.jsonc + github-app.md) via
+  `bun run config --env staging`, which reads prod vars from the GLH_VARS_JSON
+  env var (set by caller workflow) and appends -staging to the Worker names and
+  the S3 bucket.
 
 runs:
   using: composite
@@ -14,16 +14,6 @@ runs:
 
     - uses: git-lfs-hub/ci-cd/actions/init-bun@main
 
-    - name: Build staging vars (append -staging suffix)
+    - name: Render staging artifacts
       shell: bash
-      run: |
-        rm -f vars.input.json vars.json wrangler.jsonc github-app.md
-        bun "$GITHUB_ACTION_PATH/staging.ts" create-vars-input-json
-
-    # Render vars.json and wrangler.jsonc
-    - run: bun run config
-      shell: bash
-
-    - name: Sanity-check rendered Worker name
-      shell: bash
-      run: bun "$GITHUB_ACTION_PATH/staging.ts" validate-wrangler-json
+      run: bun run config --env staging
