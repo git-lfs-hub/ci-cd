@@ -56,7 +56,7 @@ Production smoke after deploy uses composite actions directly in the caller work
 
 ### `staging.yml`
 
-`workflow_call` with no inputs. Reads `GLH_VARS_JSON` from caller `vars`/`secrets` and derives staging values internally by appending `-staging` to `cloudflare.workerName` and `s3.bucket`. **No separate `GLH_STAGING_VARS_JSON` needed.**
+`workflow_call` with no inputs. Reads `GLH_VARS_JSON` from caller `vars`/`secrets` and derives staging values internally via `bun run config --env staging`, which appends `-staging` to `cloudflare.workerName`, `cloudflare.admin.workerName`, and `s3.bucket`. **No separate `GLH_STAGING_VARS_JSON` needed.**
 
 Concurrency group `lfs-server-staging-e2e` (queue depth 1) because deploy and e2e share one staging Worker.
 
@@ -87,7 +87,7 @@ staging:
 | `actions/init-bun` | Set up Bun, cache dependencies, `bun install --frozen-lockfile` |
 | `actions/init-vars` | Write `vars-json` input to a file (default `vars.json`); fails if input is empty |
 | `actions/init-deploy` | Node setup, `init-bun`, conditional `init-vars` → `vars.input.json`, then `turbo '//#config'` |
-| `actions/init-staging` | Build staging `vars.input.json` (`-staging` suffix), then `init-deploy` + Worker name sanity check |
+| `actions/init-staging` | Materialize prod vars, then `bun run config --env staging` (`-staging` suffix on Worker names + bucket) |
 | `actions/deploy` | `turbo run deploy` (requires `cloudflare-api-token` input) |
 | `actions/e2e-test` | Run vitest suite from `e2e/` (`gh-pat`, `login-secret`, `pr-number` inputs) |
 | `actions/turbo-summary` | Post Turbo run summary via `charpeni/turborepo-summary-action` |
