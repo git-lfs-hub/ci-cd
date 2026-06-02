@@ -2,6 +2,11 @@ name: E2E
 
 on:
   workflow_call:
+    inputs:
+      test-repo:
+        description: "owner/repo used by e2e tests"
+        type: string
+        required: true
 
 env:
   GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON || secrets.GLH_VARS_JSON }}
@@ -34,3 +39,4 @@ jobs:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_LOGIN_SECRET }}
           pr-number: main
+          test-repo: ${{ inputs.test-repo }}

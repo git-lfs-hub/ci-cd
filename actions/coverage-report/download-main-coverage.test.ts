@@ -60,10 +60,10 @@ describe("download", () => {
     expect(final).toHaveProperty("/src/index.ts");
 
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy.mock.calls[0][0]).toMatch(
+    expect(spy.mock.calls[0]![0]).toMatch(
       /::notice file=.*coverage-summary\.json::File written:/,
     );
-    expect(spy.mock.calls[1][0]).toMatch(
+    expect(spy.mock.calls[1]![0]).toMatch(
       /::notice file=.*coverage-final\.json::File written:/,
     );
     spy.mockRestore();

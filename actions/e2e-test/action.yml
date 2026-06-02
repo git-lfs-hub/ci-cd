@@ -11,6 +11,9 @@ inputs:
   pr-number:
     description: PR number (or 'main') for test isolation.
     required: true
+  test-repo:
+    description: owner/repo used by e2e tests.
+    required: true
 
 runs:
   using: composite
@@ -27,4 +30,5 @@ runs:
         LOGIN_SECRET: ${{ inputs.login-secret }}
         PR_NUMBER: ${{ inputs.pr-number }}
         RUN_ID: ${{ github.run_id }}
+        TEST_REPO: ${{ inputs.test-repo }}
       run: bun --bun run e2e-test
