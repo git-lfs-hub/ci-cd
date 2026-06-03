@@ -3,16 +3,23 @@ description: Set up @git-lfs-hub/{peer} to ../{peer} and run `bun install` for t
 
 inputs:
   peers:
-    description: Peer @git-lfs-hub packages, e.g. 'lib'
+    description: Peer @git-lfs-hub packages, e.g. 'lib config'
     required: true
 
 runs:
   using: composite
   steps:
+    # Peers must exist at ../{peer} before the host `bun install`, since the host
+    # references them as file:../{peer} dependencies.
     - name: Check out lib
       uses: git-lfs-hub/ci-cd/actions/check-out-peer@main
       with: { peer: lib, refs: '${{ inputs.peers }}' }
       if: contains(inputs.peers, 'lib')
+
+    - name: Check out config
+      uses: git-lfs-hub/ci-cd/actions/check-out-peer@main
+      with: { peer: config, refs: '${{ inputs.peers }}' }
+      if: contains(inputs.peers, 'config')
 
     # Install bun and run host `bun install`
     - uses: git-lfs-hub/ci-cd/actions/init-bun@main
@@ -21,3 +28,8 @@ runs:
       uses: git-lfs-hub/ci-cd/actions/init-peer@main
       with: { peer: lib }
       if: contains(inputs.peers, 'lib')
+
+    - name: Install config bun dependencies
+      uses: git-lfs-hub/ci-cd/actions/init-peer@main
+      with: { peer: config }
+      if: contains(inputs.peers, 'config')
