@@ -50,3 +50,8 @@ runs:
           exit 1
         fi
         echo "ok: ci-cd refs @main"
+
+    - name: No downstream files tracked
+      if: vars.GLH_UPSTREAM == 'true'
+      shell: bash
+      run: config/upstream.sh pre-commit
