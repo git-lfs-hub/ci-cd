@@ -7,9 +7,13 @@ on:
         description: "owner/repo used by e2e tests"
         type: string
         required: false
+    secrets:
+      CLOUDFLARE_API_TOKEN: { required: true }
+      GLH_STAGING_GITHUB_PAT: { required: false }
+      GLH_STAGING_LOGIN_SECRET: { required: false }
 
 env:
-  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON || secrets.GLH_VARS_JSON }}
+  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON }}
   TURBO_REMOTE_CACHE_SIGNATURE_KEY: staging
 
 permissions:
