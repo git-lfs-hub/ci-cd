@@ -13,6 +13,7 @@ on:
       GLH_STAGING_LOGIN_SECRET: { required: false }
 
 env:
+  GLH_ENV: staging
   GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON }}
   TURBO_REMOTE_CACHE_SIGNATURE_KEY: staging
 
