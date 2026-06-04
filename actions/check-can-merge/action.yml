@@ -1,6 +1,11 @@
 name: Check can merge
 description: Gate merges to main. Required-status check; fails on conditions that are fine on a PR branch but must be resolved before merge.
 
+inputs:
+  upstream:
+    description: Set to 'true' on the upstream repo to run the downstream-files guard (vars context is unavailable inside composite actions, so the caller must pass vars.GLH_UPSTREAM here).
+    default: 'false'
+
 runs:
   using: composite
   steps:
@@ -52,6 +57,6 @@ runs:
         echo "ok: ci-cd refs @main"
 
     - name: No downstream files tracked
-      if: vars.GLH_UPSTREAM == 'true'
+      if: inputs.upstream == 'true'
       shell: bash
       run: config/upstream.sh pre-commit
