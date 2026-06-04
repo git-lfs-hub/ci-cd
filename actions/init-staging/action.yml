@@ -1,9 +1,9 @@
 name: "Init staging render"
 description: |
-  Render staging artifacts (vars.json + wrangler.jsonc + github-app.md) via
-  `bun run config --env staging`, which reads prod vars from the GLH_VARS_JSON
-  env var (set by caller workflow) and appends -staging to the Worker names and
-  the S3 bucket.
+  Pin the deploy env to staging in .config.json, then render staging artifacts
+  (vars.json + wrangler.jsonc + github-app.md). .config.json outranks GLH_ENV, so
+  every render in the pipeline — including the turbo //#config re-render during
+  deploy that strict-env mode strips GLH_ENV from — resolves staging.
 
 runs:
   using: composite
@@ -16,4 +16,6 @@ runs:
 
     - name: Render staging artifacts
       shell: bash
-      run: bun run config
+      run: |
+        echo '{ "env": "staging" }' > .config.json
+        bun run config
