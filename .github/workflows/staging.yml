@@ -15,7 +15,6 @@ on:
 env:
   GLH_ENV: staging
   GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON }}
-  TURBO_REMOTE_CACHE_SIGNATURE_KEY: staging
 
 permissions:
   contents: write

@@ -29,6 +29,7 @@ runs:
       shell: bash
       run: |
         printf '{ "env": "%s" }\n' '${{ inputs.env }}' > .config.json
+        echo "TURBO_REMOTE_CACHE_SIGNATURE_KEY=${{ inputs.env }}" >> "$GITHUB_ENV"
 
     # Avoid turbo cache invalidations downstream
     - run: bun turbo '//#config'
