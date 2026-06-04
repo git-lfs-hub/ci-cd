@@ -16,4 +16,4 @@ runs:
 
     - name: Render staging artifacts
       shell: bash
-      run: bun run config --env staging
+      run: bun run config
