@@ -1,6 +1,16 @@
 name: "Init"
 description: "Checkout, set up Bun, install dependencies and configure"
 
+inputs:
+  env:
+    description: |
+      Deploy env to pin in .config.json (e.g. staging). Empty = prod/default.
+      .config.json outranks GLH_ENV, so every render in the pipeline — including
+      the turbo //#config re-render during deploy that strict-env mode strips
+      GLH_ENV from — resolves this env.
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -14,11 +24,11 @@ runs:
 
     - uses: git-lfs-hub/ci-cd/actions/init-bun@main
 
-    - uses: git-lfs-hub/ci-cd/actions/init-vars@main
-      if: hashFiles('vars.json', 'vars.input.json') == ''
-      with:
-        vars-json: ${{ env.GLH_VARS_JSON }}
-        file: vars.input.json
+    - name: Pin deploy env
+      if: inputs.env != ''
+      shell: bash
+      run: |
+        printf '{ "env": "%s" }\n' '${{ inputs.env }}' > .config.json
 
     # Avoid turbo cache invalidations downstream
     - run: bun turbo '//#config'
