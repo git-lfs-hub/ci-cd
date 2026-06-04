@@ -2,11 +2,13 @@ name: CI
 
 on:
   workflow_call:
+    secrets:
+      TURBO_TOKEN: { required: false }
 
 env:
-  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON || secrets.GLH_VARS_JSON }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM || secrets.TURBO_TEAM }}
-  TURBO_TEAMID: ${{ vars.TURBO_TEAMID || secrets.TURBO_TEAMID }}
+  GLH_VARS_JSON: ${{ vars.GLH_VARS_JSON }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TEAMID: ${{ vars.TURBO_TEAMID }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
