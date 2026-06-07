@@ -22,7 +22,7 @@ jobs:
           submodules: recursive
 
       - name: Init
-        uses: git-lfs-hub/ci-cd/actions/init-deploy@fix-config-root
+        uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 
       - name: Test
         run: bunx turbo run test build
