@@ -86,7 +86,7 @@ staging:
 |:-------|:------------|
 | `actions/init-bun` | Set up Bun, cache dependencies, `bun install --frozen-lockfile` |
 | `actions/init-vars` | Write `vars-json` input to a file (default `vars.json`); fails if input is empty |
-| `actions/init-deploy` | Node setup, `init-bun`, conditional `init-vars` → `vars.input.json`, then `turbo '//#config'` |
+| `actions/init-deploy` | Node setup, `init-bun`, conditional `init-vars` → `vars.input.json`, then `turbo run config` |
 | `actions/init-staging` | Materialize prod vars, then `bun run config --env staging` (`-staging` suffix on Worker names + bucket) |
 | `actions/deploy` | `turbo run deploy` (requires `cloudflare-api-token` input) |
 | `actions/e2e-test` | Run vitest suite from `e2e/` (`gh-pat`, `login-secret`, `pr-number` inputs) |
