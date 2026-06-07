@@ -6,7 +6,7 @@ inputs:
     description: |
       Deploy env to pin in .config.json (e.g. staging). Empty = prod/default.
       .config.json outranks GLH_ENV, so every render in the pipeline — including
-      the turbo //#config re-render during deploy that strict-env mode strips
+      the `bun run config` re-render during deploy that strict-env mode strips
       GLH_ENV from — resolves this env.
     required: false
     default: ""

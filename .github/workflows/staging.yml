@@ -34,7 +34,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Init Staging
-        uses: git-lfs-hub/ci-cd/actions/init-deploy@main
+        uses: git-lfs-hub/ci-cd/actions/init-deploy@fix-config-root
         with:
           env: staging
 
