@@ -11,6 +11,7 @@ on:
       CLOUDFLARE_API_TOKEN: { required: true }
       GLH_STAGING_GITHUB_PAT: { required: false }
       GLH_STAGING_LOGIN_SECRET: { required: false }
+      GLH_STAGING_ADMIN_LOGIN_SECRET: { required: false }
 
 env:
   GLH_ENV: staging
@@ -49,5 +50,6 @@ jobs:
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_STAGING_LOGIN_SECRET }}
+          admin-login-secret: ${{ secrets.GLH_STAGING_ADMIN_LOGIN_SECRET }}
           pr-number: ${{ github.event.pull_request.number }}
           test-repo: ${{ inputs.test-repo }}
