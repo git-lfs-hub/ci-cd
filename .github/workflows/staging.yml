@@ -46,7 +46,7 @@ jobs:
 
       - name: Run E2E Tests
         if: ${{ inputs.test-repo != '' }}
-        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@lfs-admin
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_STAGING_LOGIN_SECRET }}
