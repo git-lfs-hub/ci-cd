@@ -40,7 +40,7 @@ jobs:
           env: staging
 
       - name: Deploy Staging
-        uses: git-lfs-hub/ci-cd/actions/deploy@main
+        uses: git-lfs-hub/ci-cd/actions/deploy@lfs-admin
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
