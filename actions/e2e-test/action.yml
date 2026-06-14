@@ -6,7 +6,10 @@ inputs:
     description: GitHub PAT used by the e2e tests.
     required: true
   login-secret:
-    description: LOGIN_SECRET used by the e2e tests.
+    description: LOGIN_SECRET used by the e2e tests (lfs-server).
+    required: true
+  admin-login-secret:
+    description: ADMIN_LOGIN_SECRET used by the e2e tests (lfs-admin).
     required: true
   pr-number:
     description: PR number (or 'main') for test isolation.
@@ -28,6 +31,7 @@ runs:
       env:
         GH_PAT: ${{ inputs.gh-pat }}
         LOGIN_SECRET: ${{ inputs.login-secret }}
+        ADMIN_LOGIN_SECRET: ${{ inputs.admin-login-secret }}
         PR_NUMBER: ${{ inputs.pr-number }}
         RUN_ID: ${{ github.run_id }}
         TEST_REPO: ${{ inputs.test-repo }}

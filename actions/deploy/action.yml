@@ -12,4 +12,8 @@ runs:
     - shell: bash
       env:
         CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
-      run: bunx turbo run deploy
+        # Each wrangler invocation appends a NDJSON "deploy" entry here.
+        WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.json
+      run: |
+        bunx turbo run deploy
+        bun "$GITHUB_ACTION_PATH/surface-urls.ts"

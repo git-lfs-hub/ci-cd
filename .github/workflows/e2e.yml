@@ -10,6 +10,7 @@ on:
     secrets:
       GLH_STAGING_GITHUB_PAT: { required: true }
       GLH_LOGIN_SECRET: { required: true }
+      GLH_ADMIN_LOGIN_SECRET: { required: true }
       TURBO_TOKEN: { required: false }
 
 env:
@@ -42,5 +43,6 @@ jobs:
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_LOGIN_SECRET }}
+          admin-login-secret: ${{ secrets.GLH_ADMIN_LOGIN_SECRET }}
           pr-number: main
           test-repo: ${{ inputs.test-repo }}

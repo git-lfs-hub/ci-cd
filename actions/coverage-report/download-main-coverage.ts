@@ -2,7 +2,6 @@
 
 import process from "node:process";
 import { mkdir } from "node:fs/promises";
-export {};
 
 const FILES = ["coverage-summary.json", "coverage-final.json"];
 

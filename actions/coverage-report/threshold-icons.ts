@@ -2,7 +2,6 @@
 
 import process from "node:process";
 import { type Thresholds, resolveThresholds } from "../coverage-defaults";
-export {};
 
 export const COLOR_ICON: Record<string, string> = {
   "100": "🏅", // medal "🟩", // green square
