@@ -40,13 +40,13 @@ jobs:
           env: staging
 
       - name: Deploy Staging
-        uses: git-lfs-hub/ci-cd/actions/deploy@lfs-admin
+        uses: git-lfs-hub/ci-cd/actions/deploy@main
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Run E2E Tests
         if: ${{ inputs.test-repo != '' }}
-        uses: git-lfs-hub/ci-cd/actions/e2e-test@lfs-admin
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_STAGING_LOGIN_SECRET }}

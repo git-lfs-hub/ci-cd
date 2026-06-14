@@ -39,7 +39,7 @@ jobs:
         uses: git-lfs-hub/ci-cd/actions/init-deploy@main
 
       - name: Test
-        uses: git-lfs-hub/ci-cd/actions/e2e-test@lfs-admin
+        uses: git-lfs-hub/ci-cd/actions/e2e-test@main
         with:
           gh-pat: ${{ secrets.GLH_STAGING_GITHUB_PAT }}
           login-secret: ${{ secrets.GLH_LOGIN_SECRET }}
