@@ -19,14 +19,17 @@ function parseDeploys(ndjson: string) {
   return ndjson
     .split("\n")
     .filter(Boolean)
-    .map((line) => JSON.parse(line))
-    .filter((entry) => entry.type === "deploy")
+    .map((line) => JSON.parse(line) as WranglerOutputEntry)
+    .filter((entry): entry is WranglerDeployEntry => entry.type === "deploy")
     .flatMap((entry) =>
-      (entry.targets as string[])
+      (entry.targets ?? [])
         .filter((target) => target.startsWith("https://"))
         .map((url) => ({ name: entry.worker_name as string, url })),
     );
 }
+
+type WranglerOutputEntry = { type: string; worker_name?: string; targets?: string[] };
+type WranglerDeployEntry = WranglerOutputEntry & { type: "deploy" };
 
 function summary(line: string) {
   const file = process.env.GITHUB_STEP_SUMMARY;
