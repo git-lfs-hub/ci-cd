@@ -2,7 +2,6 @@
 
 import process from "node:process";
 import { type Thresholds, resolveThresholds } from "../coverage-defaults";
-export {};
 
 export function sortedThresholds(raw: Thresholds) {
   return Object.entries(raw)
@@ -10,10 +9,7 @@ export function sortedThresholds(raw: Thresholds) {
     .sort((a, b) => b.min - a.min);
 }
 
-export function resolveColor(
-  pct: number,
-  thresholds: { min: number; color: string }[],
-) {
+export function resolveColor(pct: number, thresholds: { min: number; color: string }[]) {
   return thresholds.find((t) => pct >= t.min)?.color ?? "grey";
 }
 
@@ -27,10 +23,7 @@ export async function main(thresholdsJson: string) {
 
   const thresholds = sortedThresholds(resolveThresholds(thresholdsJson));
   const color = resolveColor(pct, thresholds);
-  await Bun.write(
-    "coverage/coverage-badge.json",
-    JSON.stringify(makeBadge(pct, color)),
-  );
+  await Bun.write("coverage/coverage-badge.json", JSON.stringify(makeBadge(pct, color)));
   console.log(
     "::notice file=coverage/coverage-badge.json::File written: coverage/coverage-badge.json",
   );
